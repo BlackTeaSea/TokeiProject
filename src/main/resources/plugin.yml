@@ -1,0 +1,4 @@
+name: TokeiProject
+version: '${project.version}'
+main: org.blackteasea.tokeiproject.TokeiProject
+api-version: '1.20'
