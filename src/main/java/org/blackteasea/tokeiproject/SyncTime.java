@@ -1,14 +1,8 @@
 package org.blackteasea.tokeiproject;
 
-import org.bukkit.Server;
-import org.bukkit.World;
-
 import java.time.*;
 
 public class SyncTime {
-    LocalTime time;
-
-    Server server = Data.getInstance().getJavaPlugin().getServer();
 
     public static long convertTime(LocalTime time){
         return time.getHour()*1000 + time.getMinute()*(1000/60);
@@ -21,9 +15,7 @@ public class SyncTime {
         return 1/minecraftSeconds;
     }
 
-    public static float getDayAmount(float timeRatio){
-        return 24 * timeRatio;
-    }
+
     public static float getFloatTime(LocalTime time){
         return time.getHour() + (float)time.getMinute()/60 + (float)time.getSecond()/3600;
     }
