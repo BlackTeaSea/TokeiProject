@@ -5,7 +5,7 @@ import java.time.*;
 public class SyncTime {
 
     public static long convertTime(LocalTime time){
-        return time.getHour()*1000 + time.getMinute()*(1000/60);
+        return time.getHour()*1000 + time.getMinute()*(1000/60) + (long)((float)time.getSecond()*(float)(10/36));
     }
     public static long convertFloatTime(float time){
         return (long)(time * 1000);
@@ -15,18 +15,11 @@ public class SyncTime {
         return 1/minecraftSeconds;
     }
 
-
-    public static float getFloatTime(LocalTime time){
-        return time.getHour() + (float)time.getMinute()/60 + (float)time.getSecond()/3600;
-    }
-
-    public static float getDiffTime(LocalTime iTime, LocalTime fTime){
-        float initTime = getFloatTime(iTime);
-        float finalTime = getFloatTime(fTime);
-        if(initTime > finalTime){
-            return (24 - initTime - finalTime);
+    public static long getDiffTime(long iTime, long fTime){
+        if(iTime > fTime){
+            return (24000 - iTime - fTime);
         }
-        return finalTime - initTime;
+        return fTime - iTime;
     }
 
 }

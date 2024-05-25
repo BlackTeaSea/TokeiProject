@@ -1,10 +1,17 @@
 package org.blackteasea.tokeiproject;
 
+import jdk.vm.ci.meta.Local;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+
 import java.beans.PropertyChangeSupport;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.TimeZone;
 
 public class Data extends PropertyChangeSupport {
     //Singleton Setup
@@ -44,13 +51,6 @@ public class Data extends PropertyChangeSupport {
         this.worldList = worldList;
     }
 
-    public LocalTime getTime(){
-        return time;
-    }
-    public void setTime(LocalTime time){
-        this.time = time;
-    }
-
     public void setMinecraftSecond(float minecraftSecond) {
         this.minecraftSecond = minecraftSecond;
     }
@@ -59,26 +59,28 @@ public class Data extends PropertyChangeSupport {
     }
 
     public void syncWorldTime(){
+        this.time = LocalTime.now();
         long time = SyncTime.convertTime(this.time);
-        for(World world : this.worldList){
-            world.setTime(time);
-        }
+        this.worldList.forEach(world -> world.setTime(time*(long)minecraftSecond));
     }
 
-    public void adjustWorldTime(LocalTime time){
-        LocalTime itime = this.time;
-        setTime(time);
-        LocalTime ftime = this.time;
+    public long adjustWorldTime(){
+        long itime = SyncTime.convertTime(this.time);
+        this.time = LocalTime.now();
+        long ftime = SyncTime.convertTime(this.time);
 
-        long Diff = SyncTime.convertFloatTime(SyncTime.getDiffTime(itime, ftime));
+        long Diff = SyncTime.getDiffTime(itime, ftime);
         long adjDiff = (long)((float)Diff/SyncTime.getTimeRatio(minecraftSecond));
+        this.worldList.forEach(world -> world.setTime(world.getTime() + adjDiff));
 
-        for(World world : this.worldList){
-            world.setTime(world.getTime() + adjDiff);
-        }
-
+        return adjDiff;
     }
 
-
-
+    BukkitRunnable adjTask = new BukkitRunnable() {
+        @Override
+        public void run() {
+            getJavaPlugin().getServer().getLogger().info("Current real world time" + SyncTime.convertTime(LocalTime.now()));
+            getJavaPlugin().getServer().getLogger().info("Time Adjusted by: " + adjustWorldTime());
+        }
+    };
 }
