@@ -16,6 +16,7 @@ public class Data extends PropertyChangeSupport {
     private JavaPlugin plugin;
     private List<World> worldList;
     private LocalTime time;
+    private float minecraftSecond;
 
 
     //Singleton Setup
@@ -47,10 +48,17 @@ public class Data extends PropertyChangeSupport {
     }
 
     public LocalTime getTime(){
-        return this.time;
+        return time;
     }
     public void setTime(LocalTime time){
         this.time = time;
+    }
+
+    public void setMinecraftSecond(float minecraftSecond) {
+        this.minecraftSecond = minecraftSecond;
+    }
+    public float getMinecraftSecond() {
+        return minecraftSecond;
     }
 
     public void syncWorldTime(){
@@ -58,6 +66,20 @@ public class Data extends PropertyChangeSupport {
         for(World world : this.worldList){
             world.setTime(time);
         }
+    }
+
+    public void adjustWorldTime(LocalTime time){
+        LocalTime itime = this.time;
+        setTime(time);
+        LocalTime ftime = this.time;
+
+        long Diff = SyncTime.convertFloatTime(SyncTime.getDiffTime(itime, ftime));
+        long adjDiff = (long)((float)Diff/SyncTime.getTimeRatio(minecraftSecond));
+
+        for(World world : this.worldList){
+            world.setTime(world.getTime() + adjDiff);
+        }
+
     }
 
 

@@ -16,6 +16,9 @@ public class SyncTime {
 
         return convertedTime;
     }
+    public static long convertFloatTime(float time){
+        return (long)(time * 1000);
+    }
 
     public static float getTimeRatio(float minecraftSeconds){
         return 1/minecraftSeconds;
