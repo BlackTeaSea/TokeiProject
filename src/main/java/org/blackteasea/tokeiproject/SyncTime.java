@@ -1,48 +1,40 @@
 package org.blackteasea.tokeiproject;
 
-import jdk.vm.ci.meta.Local;
 import org.bukkit.Server;
 import org.bukkit.World;
 
 import java.time.*;
 
 public class SyncTime {
+    LocalTime time;
 
     Server server = Data.getInstance().getJavaPlugin().getServer();
-    static LocalTime time;
 
+    public static long convertTime(LocalTime time){
+        long convertedTime = time.getHour()*1000;
+        convertedTime += time.getMinute()*(1000/60);
 
-    //Synchronizes time on server start
-    public static long minecraftAdjust(LocalTime time){
-        float calculatedHour = (float)time.getHour();
-        float calculatedMinute = ((float)time.getMinute()/60);
-        float calculatedSecond = ((float)time.getSecond()/3600);
-        float fullCalculatedTime = calculatedHour + calculatedMinute + calculatedSecond;
-
-        return (long)(fullCalculatedTime*1000);
-    }
-    public static long biDayAdjust(LocalTime time){
-        long minecraftTime = minecraftAdjust(time);
-
-        return minecraftTime/36;
+        return convertedTime;
     }
 
-    //Synchronizes time on server start. Should not be used on schedule, as this does not advance day.
-    public static void absoluteSync(){
-        time = LocalTime.now();
-        long adjustedTime = biDayAdjust(time);
+    public static float getTimeRatio(float minecraftSeconds){
+        return 1/minecraftSeconds;
+    }
 
-        for(World world : Data.getInstance().getWorldList()){
-            world.setFullTime(adjustedTime);
+    public static float getDayAmount(float timeRatio){
+        return 24 * timeRatio;
+    }
+    public static float getFloatTime(LocalTime time){
+        return time.getHour() + (float)time.getMinute()/60 + (float)time.getSecond()/3600;
+    }
+
+    public static float getDiffTime(LocalTime iTime, LocalTime fTime){
+        float initTime = getFloatTime(iTime);
+        float finalTime = getFloatTime(fTime);
+        if(initTime > finalTime){
+            return (24 - initTime - finalTime);
         }
+        return finalTime - initTime;
+    }
 
-    }
-    //Synchronizes time on schedule. Different from absoluteSync, since this changes the day as well
-    public void sync(){
-        time = LocalTime.now();
-        long adjustedTime = biDayAdjust(time);
-        for (World world : Data.getInstance().getWorldList()){
-            world.setTime(adjustedTime);
-        }
-    }
 }

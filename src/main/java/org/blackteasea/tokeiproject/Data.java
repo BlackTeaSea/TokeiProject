@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.beans.PropertyChangeSupport;
+import java.time.LocalTime;
 import java.util.List;
 
 public class Data extends PropertyChangeSupport {
@@ -14,6 +15,8 @@ public class Data extends PropertyChangeSupport {
 
     private JavaPlugin plugin;
     private List<World> worldList;
+    private LocalTime time;
+
 
     //Singleton Setup
     private Data() {
@@ -41,6 +44,20 @@ public class Data extends PropertyChangeSupport {
     }
     public void setWorldList(List<World> worldList){
         this.worldList = worldList;
+    }
+
+    public LocalTime getTime(){
+        return this.time;
+    }
+    public void setTime(LocalTime time){
+        this.time = time;
+    }
+
+    public void syncWorldTime(){
+        long time = SyncTime.convertTime(this.time);
+        for(World world : this.worldList){
+            world.setTime(time);
+        }
     }
 
 
