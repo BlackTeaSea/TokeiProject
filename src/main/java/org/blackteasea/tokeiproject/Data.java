@@ -1,16 +1,19 @@
 package org.blackteasea.tokeiproject;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 
 public class Data extends PropertyChangeSupport {
     //Singleton Setup
     private static Data instance;
 
     private JavaPlugin plugin;
+    private List<World> worldList;
 
     //Singleton Setup
     private Data() {
@@ -32,6 +35,13 @@ public class Data extends PropertyChangeSupport {
         this.plugin = plugin;
     }
 
+    //World
+    public List<World> getWorldList(){
+        return worldList;
+    }
+    public void setWorldList(List<World> worldList){
+        this.worldList = worldList;
+    }
 
 
 
