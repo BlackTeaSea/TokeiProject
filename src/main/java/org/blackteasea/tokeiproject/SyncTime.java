@@ -11,10 +11,7 @@ public class SyncTime {
     Server server = Data.getInstance().getJavaPlugin().getServer();
 
     public static long convertTime(LocalTime time){
-        long convertedTime = time.getHour()*1000;
-        convertedTime += time.getMinute()*(1000/60);
-
-        return convertedTime;
+        return time.getHour()*1000 + time.getMinute()*(1000/60);
     }
     public static long convertFloatTime(float time){
         return (long)(time * 1000);
