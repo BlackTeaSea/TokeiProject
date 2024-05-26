@@ -23,10 +23,9 @@ public final class TokeiProject extends JavaPlugin {
         //GAMERULES
         //Stops the daylight cycle for all worlds
         getServer().getWorlds().forEach(world -> world.setGameRule(DO_DAYLIGHT_CYCLE, false));
-        Data.getInstance().setMinecraftSecond(72.0f);
 
         Data.getInstance().syncWorldTime();
-        Data.getInstance().adjTask.runTaskTimer(this, 1L, 1200L);
+        Data.getInstance().advTime.runTaskTimer(this, 1L, 36L);
         getLogger().info("Finished Tokei Plugin");
     }
 

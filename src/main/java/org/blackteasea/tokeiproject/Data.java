@@ -61,26 +61,17 @@ public class Data extends PropertyChangeSupport {
     public void syncWorldTime(){
         this.time = LocalTime.now();
         long time = SyncTime.convertTime(this.time);
-        this.worldList.forEach(world -> world.setTime(time*(long)minecraftSecond));
+        this.worldList.forEach(world -> world.setTime((time + 6000)*2));
     }
 
-    public long adjustWorldTime(){
-        long itime = SyncTime.convertTime(this.time);
-        this.time = LocalTime.now();
-        long ftime = SyncTime.convertTime(this.time);
-
-        long Diff = SyncTime.getDiffTime(itime, ftime);
-        long adjDiff = (long)((float)Diff/SyncTime.getTimeRatio(minecraftSecond));
-        this.worldList.forEach(world -> world.setTime(world.getTime() + adjDiff));
-
-        return adjDiff;
+    public void advanceWorldTime(){
+        this.worldList.forEach(world -> world.setTime(world.getTime() + 1L));
     }
 
-    BukkitRunnable adjTask = new BukkitRunnable() {
+    BukkitRunnable advTime = new BukkitRunnable() {
         @Override
         public void run() {
-            getJavaPlugin().getServer().getLogger().info("Current real world time" + SyncTime.convertTime(LocalTime.now()));
-            getJavaPlugin().getServer().getLogger().info("Time Adjusted by: " + adjustWorldTime());
+            advanceWorldTime();
         }
     };
 }
